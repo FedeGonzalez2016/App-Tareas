@@ -1,3 +1,4 @@
+//index.tsx
 import React, { useState } from 'react';
 import Head from 'next/head';
 import MostrarTarea from './Tareas';
