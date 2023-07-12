@@ -1,12 +1,47 @@
-//Tareas.tsx
 import React, { useState, useEffect } from 'react';
-import { Container } from '@mui/material';
+import { Container, Typography, Button, TextField } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import axios from 'axios';
 
 interface Tarea {
   id: number;
   titulo: string;
 }
+
+const StyledContainer = styled(Container)({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100vh',
+});
+
+const StyledTitle = styled(Typography)({
+  fontSize: '2rem',
+  color: 'black',
+  fontFamily: 'Roboto',
+  marginBottom: '1rem', // Espacio inferior entre el título y el párrafo
+});
+
+const StyledParagraph = styled(Typography)({
+  marginBottom: '1rem', // Espacio inferior entre el párrafo y el cuadro de ingreso de texto
+});
+
+const StyledButton = styled(Button)({
+  backgroundColor: 'blue',
+  color: 'white',
+});
+
+const StyledTextField = styled(TextField)({
+  borderRadius: '8px',
+  width: '300px',
+  margin: '10px',
+});
+
+const StyledInputContainer = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+});
 
 const ListaTareas: React.FC = () => {
   const [tareas, setTareas] = useState<Tarea[]>([]);
@@ -51,27 +86,24 @@ const ListaTareas: React.FC = () => {
   };
 
   return (
-    <Container
-      maxWidth="sm"
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}
-    >
-      <div>
-        <h2>LISTA DE TAREAS</h2>
+    <StyledContainer maxWidth="sm">
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <StyledTitle variant="h2">Lista de Tareas</StyledTitle>
         {tareas.length > 0 ? (
           <ul>
             {tareas.map((tarea) => (
               <li key={tarea.id}>
                 <span onClick={() => mostrarContenido(tarea.titulo)}>{tarea.titulo}</span>
-                <button onClick={() => eliminarTarea(tarea.id)}>Eliminar</button>
+                <StyledButton onClick={() => eliminarTarea(tarea.id)}>Eliminar</StyledButton>
               </li>
             ))}
           </ul>
         ) : (
-          <p>No hay tareas.</p>
+          <StyledParagraph>No hay tareas.</StyledParagraph>
         )}
         <EntradaTarea agregarTarea={agregarTarea} />
       </div>
-    </Container>
+    </StyledContainer>
   );
 };
 
@@ -90,12 +122,21 @@ const EntradaTarea: React.FC<EntradaTareaProps> = ({ agregarTarea }) => {
   };
 
   return (
-    <div>
-      <input type="text" value={nuevaTarea} onChange={(e) => setNuevaTarea(e.target.value)} />
-      <button onClick={handleAgregarTarea} disabled={nuevaTarea.trim() === ''}>
+    <StyledInputContainer>
+      <StyledTextField
+        variant="outlined"
+        value={nuevaTarea}
+        onChange={(e) => setNuevaTarea(e.target.value)}
+        placeholder="Agregar tarea"
+      />
+      <StyledButton
+        variant="contained"
+        onClick={handleAgregarTarea}
+        disabled={nuevaTarea.trim() === ''}
+      >
         Agregar
-      </button>
-    </div>
+      </StyledButton>
+    </StyledInputContainer>
   );
 };
 
