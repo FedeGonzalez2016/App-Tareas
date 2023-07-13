@@ -1,15 +1,23 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-}
-
 module.exports = {
-  server: {
-    port: 3001, // Cambia el número de puerto a tu valor deseado
+  async headers() {
+    return [
+      {
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*', // Reemplaza con la URL de tu frontend si es diferente
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, DELETE, PATCH',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type',
+          },
+        ],
+      },
+    ];
   },
 };
-
-
-
-
-

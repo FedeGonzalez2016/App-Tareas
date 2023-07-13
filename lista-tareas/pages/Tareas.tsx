@@ -1,143 +1,76 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Typography, Button, TextField } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import axios from 'axios';
+import { useEffect, useState } from 'react';
 
-interface Tarea {
-  id: number;
-  titulo: string;
-}
-
-const StyledContainer = styled(Container)({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '100vh',
-});
-
-const StyledTitle = styled(Typography)({
-  fontSize: '2rem',
-  color: 'black',
-  fontFamily: 'Roboto',
-  marginBottom: '1rem', // Espacio inferior entre el título y el párrafo
-});
-
-const StyledParagraph = styled(Typography)({
-  marginBottom: '1rem', // Espacio inferior entre el párrafo y el cuadro de ingreso de texto
-});
-
-const StyledButton = styled(Button)({
-  backgroundColor: 'blue',
-  color: 'white',
-});
-
-const StyledTextField = styled(TextField)({
-  borderRadius: '8px',
-  width: '300px',
-  margin: '10px',
-});
-
-const StyledInputContainer = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-});
-
-const ListaTareas: React.FC = () => {
-  const [tareas, setTareas] = useState<Tarea[]>([]);
+const Tareas = () => {
+  const [tasks, setTasks] = useState([]);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
 
   useEffect(() => {
-    const obtenerTareas = async () => {
-      try {
-        const response = await axios.get('/api/tareas');
-        setTareas(response.data);
-      } catch (error) {
-        console.error('Error al obtener las tareas:', error);
-      }
-    };
-
-    obtenerTareas();
+    fetchTasks();
   }, []);
 
-  const agregarTarea = async (nuevaTarea: string) => {
-    if (nuevaTarea.trim() !== '') {
-      try {
-        const response = await axios.post('/api/tareas', { titulo: nuevaTarea });
-        const nuevaTareaItem: Tarea = response.data;
-        setTareas([...tareas, nuevaTareaItem]);
-      } catch (error) {
-        console.error('Error al agregar la tarea:', error);
-      }
-    }
-  };
-
-  const eliminarTarea = async (id: number) => {
+  const fetchTasks = async () => {
     try {
-      await axios.delete(`/api/tareas/${id}`);
-      const tareasActualizadas = tareas.filter((tarea) => tarea.id !== id);
-      setTareas(tareasActualizadas);
+      const response = await fetch('http://localhost:3000/tasks',{ mode: 'cors' }); // Ruta a tu endpoint en task.controller.ts
+      const data = await response.json();
+      setTasks(data);
     } catch (error) {
-      console.error('Error al eliminar la tarea:', error);
+      console.error('Error fetching tasks:', error);
     }
   };
 
-  const mostrarContenido = (contenido: string) => {
-    alert(contenido);
+  const addTask = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title: newTaskTitle }),
+      });
+      const data = await response.json();
+      //setTasks([...tasks, data]);
+      setNewTaskTitle('');
+    } catch (error) {
+      console.error('Error adding task:', error);
+    }
   };
 
+  //const deleteTask = async (taskId) => {
+  //  try {
+  //    await fetch(`/api/tasks/${taskId}`, {
+  //      method: 'DELETE',
+  //    });
+  //    const updatedTasks = tasks.filter((task) => task.id !== taskId);
+  //    setTasks(updatedTasks);
+  //  } catch (error) {
+  //    console.error('Error deleting task:', error);
+  //  }
+  //};
+
   return (
-    <StyledContainer maxWidth="sm">
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <StyledTitle variant="h2">Lista de Tareas</StyledTitle>
-        {tareas.length > 0 ? (
-          <ul>
-            {tareas.map((tarea) => (
-              <li key={tarea.id}>
-                <span onClick={() => mostrarContenido(tarea.titulo)}>{tarea.titulo}</span>
-                <StyledButton onClick={() => eliminarTarea(tarea.id)}>Eliminar</StyledButton>
-              </li>
-            ))}
-          </ul>
+    <div>
+      <h1>App de tareas</h1>
+      <h2>Lista de tareas</h2>
+      <ul>
+        {tasks.length > 0 ? (
+          tasks.map((task) => (
+            <li key={task}>
+              {task}
+              <button>Eliminar</button>
+            </li>
+          ))
         ) : (
-          <StyledParagraph>No hay tareas.</StyledParagraph>
+          <p>No hay tareas disponibles.</p>
         )}
-        <EntradaTarea agregarTarea={agregarTarea} />
-      </div>
-    </StyledContainer>
-  );
-};
-
-interface EntradaTareaProps {
-  agregarTarea: (tarea: string) => void;
-}
-
-const EntradaTarea: React.FC<EntradaTareaProps> = ({ agregarTarea }) => {
-  const [nuevaTarea, setNuevaTarea] = useState<string>('');
-
-  const handleAgregarTarea = () => {
-    if (nuevaTarea.trim() !== '') {
-      agregarTarea(nuevaTarea);
-      setNuevaTarea('');
-    }
-  };
-
-  return (
-    <StyledInputContainer>
-      <StyledTextField
-        variant="outlined"
-        value={nuevaTarea}
-        onChange={(e) => setNuevaTarea(e.target.value)}
-        placeholder="Agregar tarea"
+      </ul>
+      <input
+        type="text"
+        value={newTaskTitle}
+        onChange={(e) => setNewTaskTitle(e.target.value)}
       />
-      <StyledButton
-        variant="contained"
-        onClick={handleAgregarTarea}
-        disabled={nuevaTarea.trim() === ''}
-      >
-        Agregar
-      </StyledButton>
-    </StyledInputContainer>
+      <button onClick={addTask}>Enviar</button>
+    </div>
   );
 };
 
-export default ListaTareas;
+export default Tareas;
