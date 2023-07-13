@@ -51,10 +51,6 @@ const Tareas = () => {
 
   const addTask = async (event: FormEvent) => {
     event.preventDefault();
-    if (!newTask.title || !newTask.description) {
-      console.error('Please enter both title and description');
-      return;
-    }
     try {
       await fetch('http://localhost:3000/tasks', {
         method: 'POST',
