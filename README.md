@@ -17,4 +17,5 @@ Como descargar y hacer funcionar de manera local este Proyecto en su equipo paso
 7) Dirigirse al directorio "lista-tareas" con comando cd "nombre carpeta". Por ejemplo: " PS C:\Users\User\Desktop\App-Tareas\lista-tareas>"
 8) Ejecutar comando "npm run dev"
 9) Debe mostrarse un mensaje similar al siguiente en pantalla : " - ready started server on 0.0.0.0:3000, url: http://localhost:3000 "
-10) Gracias por la atención, disfrute la aplicación!!
+10) Abrir navegador en la siguiente URL : " http://localhost:3001/ "
+11) Gracias por la atención, disfrute la aplicación!!
