@@ -1,4 +1,5 @@
 import React, { useEffect, useState, ChangeEvent, FormEvent } from 'react';
+import { Button, Container, Typography, Grid } from '@mui/material';
 
 interface Task {
   id: string;
@@ -97,14 +98,20 @@ const Tareas = () => {
   };
 
   return (
-    <div>
-      <h1>APP - NOTAS</h1>
-      <ul>
+    <Container maxWidth="sm">
+      <Typography variant="h3" component="h1" align="center">
+        Lista de Tareas
+      </Typography>
+      <Grid container spacing={2}>
         {tasks.length > 0 ? (
           tasks.map((task) => (
-            <li key={task.id}>
-              <h3>{task.title}</h3>
-              <p>{task.description}</p>
+            <Grid item xs={12} key={task.id}>
+              <Typography variant="h5" component="h3">
+                {task.title}
+              </Typography>
+              <Typography variant="body1" component="p">
+                {task.description}
+              </Typography>
               {task.id === taskIdToEdit ? (
                 <>
                   <input
@@ -123,18 +130,28 @@ const Tareas = () => {
                   />
                 </>
               ) : null}
-              <button onClick={() => deleteTask(task.id)}>Eliminar</button>
+              <Button variant="contained" onClick={() => deleteTask(task.id)}>
+                Eliminar
+              </Button>
               {task.id === taskIdToEdit ? (
-                <button onClick={() => updateTask(task.id)}>Guardar</button>
+                <Button variant="contained" onClick={() => updateTask(task.id)}>
+                  Guardar
+                </Button>
               ) : (
-                <button onClick={() => setTaskIdToEdit(task.id)}>Modificar</button>
+                <Button variant="contained" onClick={() => setTaskIdToEdit(task.id)}>
+                  Modificar
+                </Button>
               )}
-            </li>
+            </Grid>
           ))
         ) : (
-          <p>No hay tareas disponibles.</p>
+          <Grid item xs={12}>
+            <Typography variant="body1" component="p">
+              No hay tareas disponibles.
+            </Typography>
+          </Grid>
         )}
-      </ul>
+      </Grid>
       <div>
         <form onSubmit={addTask}>
           <input
@@ -150,11 +167,14 @@ const Tareas = () => {
             onChange={handleInputChange}
             placeholder="Descripción"
           ></textarea>
-          <button type="submit">Agregar</button>
+          <Button variant="contained" type="submit">
+            Agregar
+          </Button>
         </form>
       </div>
-    </div>
+    </Container>
   );
 };
 
 export default Tareas;
+
