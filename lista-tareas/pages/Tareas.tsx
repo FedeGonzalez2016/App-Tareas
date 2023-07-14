@@ -1,11 +1,28 @@
 import React, { useEffect, useState, ChangeEvent, FormEvent } from 'react';
-import { Button, Container, Typography, Grid } from '@mui/material';
+import { Button, Container, Typography, Grid, TextField, Input } from '@mui/material';
+import { styled } from '@mui/system';
 
 interface Task {
   id: string;
   title: string;
   description: string;
 }
+
+const FormContainer = styled(Container)({
+  border: '1px solid',
+  borderColor: 'primary.main',
+  borderRadius: '4px',
+  padding: '16px',
+  marginBottom: '16px',
+});
+
+const TaskContainer = styled('div')({
+  border: '1px solid',
+  borderColor: 'primary.main',
+  borderRadius: '4px',
+  padding: '16px',
+  marginBottom: '16px',
+});
 
 const Tareas = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -99,49 +116,53 @@ const Tareas = () => {
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h3" component="h1" align="center">
+      <Typography variant="h3" component="h1" align="center" m={4}>
         Lista de Tareas
       </Typography>
       <Grid container spacing={2}>
         {tasks.length > 0 ? (
           tasks.map((task) => (
             <Grid item xs={12} key={task.id}>
-              <Typography variant="h5" component="h3">
-                {task.title}
-              </Typography>
-              <Typography variant="body1" component="p">
-                {task.description}
-              </Typography>
-              {task.id === taskIdToEdit ? (
-                <>
-                  <input
-                    type="text"
-                    name="editTitle"
-                    value={editTitle}
-                    onChange={handleEditInputChange}
-                    placeholder="Nuevo título"
-                  />
-                  <input
-                    type="text"
-                    name="editDescription"
-                    value={editDescription}
-                    onChange={handleEditInputChange}
-                    placeholder="Nueva descripción"
-                  />
-                </>
-              ) : null}
-              <Button variant="contained" onClick={() => deleteTask(task.id)}>
-                Eliminar
-              </Button>
-              {task.id === taskIdToEdit ? (
-                <Button variant="contained" onClick={() => updateTask(task.id)}>
-                  Guardar
+              <TaskContainer>
+                <Typography variant="h5" component="h3">
+                  {task.title}
+                </Typography>
+                <Typography variant="body1" component="p">
+                  {task.description}
+                </Typography>
+                {task.id === taskIdToEdit ? (
+                  <>
+                    <Input
+                      type="text"
+                      name="editTitle"
+                      value={editTitle}
+                      onChange={handleEditInputChange}
+                      placeholder="Nuevo título"
+                      required
+                    />
+                    <Input
+                      type="text"
+                      name="editDescription"
+                      value={editDescription}
+                      onChange={handleEditInputChange}
+                      placeholder="Nueva descripción"
+                      required
+                    />
+                  </>
+                ) : null}
+                <Button variant="contained" color="error" onClick={() => deleteTask(task.id)}>
+                  Eliminar
                 </Button>
-              ) : (
-                <Button variant="contained" onClick={() => setTaskIdToEdit(task.id)}>
-                  Modificar
-                </Button>
-              )}
+                {task.id === taskIdToEdit ? (
+                  <Button variant="contained" color="success" onClick={() => updateTask(task.id)}>
+                    Guardar
+                  </Button>
+                ) : (
+                  <Button variant="contained" onClick={() => setTaskIdToEdit(task.id)}>
+                    Modificar
+                  </Button>
+                )}
+              </TaskContainer>
             </Grid>
           ))
         ) : (
@@ -152,29 +173,32 @@ const Tareas = () => {
           </Grid>
         )}
       </Grid>
-      <div>
+      <FormContainer>
         <form onSubmit={addTask}>
-          <input
+          <TextField
             type="text"
             name="title"
             value={newTask.title}
             onChange={handleInputChange}
             placeholder="Título"
+            required
           />
-          <textarea
+          <TextField
+            id="outlined-basic"
+            label="Descripción"
+            variant="outlined"
             name="description"
+            required
             value={newTask.description}
             onChange={handleInputChange}
-            placeholder="Descripción"
-          ></textarea>
-          <Button variant="contained" type="submit">
+          />
+          <Button variant="contained" color="success" type="submit">
             Agregar
           </Button>
         </form>
-      </div>
+      </FormContainer>
     </Container>
   );
 };
 
 export default Tareas;
-
