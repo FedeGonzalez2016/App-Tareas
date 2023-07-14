@@ -1,62 +1,46 @@
-//task.service.ts
 import { Injectable } from '@nestjs/common';
-import { Task, TaskStatus } from './task.entity';
-import {v4} from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, FindOneOptions } from 'typeorm';
+import { Task } from './task.entity';
+import { v4 as uuidv4 } from 'uuid';
 import { UpdateTaskDto } from './dto/task.dto';
 
 @Injectable()
 export class TasksService {
+  constructor(
+    @InjectRepository(Task)
+    private readonly taskRepository: Repository<Task>,
+  ) {}
 
-  // Simula una base de datos  
-  private tasks: Task[] = 
-  [
-    {
-      id: '1',
-      title: 'Primer Tarea',
-      description: 'Descripcion de primer tarea',
-      status:TaskStatus.PENDING,
-    },
-  ];  
+  async getAllTasks(): Promise<Task[]> {
+    return this.taskRepository.find();
+  }
 
-    getAllTasks() {
-        return this.tasks;
-    }
+  async createTask(title: string, description: string): Promise<Task> {
+    const task = this.taskRepository.create({
+      id: uuidv4(),
+      title,
+      description,
+    });
 
-     // Resto de los métodos
+    return this.taskRepository.save(task);
+  }
 
-    
-    createTask(title: string, description: string) {
-       const task = {
-        id: v4(),
-        title,
-        description,
-        status: TaskStatus.PENDING
-       }
-        this.tasks.push(task);
+  async deleteTask(id: string): Promise<void> {
+    await this.taskRepository.delete(id);
+  }
 
-        return task
-    }
-    
-    deleteTask(id : string) {
-        // MIENTRAS LA TAREA SEA DIFERENTE A LA QUE LE PASO POR PARAMETRO, QUE ME LA GUARDE EN "tasks"
-        this.tasks = this.tasks.filter(task => task.id !== id)
-    }
+  async getTaskById(id: string): Promise<Task | null> {
+    const options: FindOneOptions<Task> = {
+      where: { id },
+    };
 
-    getTaskById(id : string) {
+    return this.taskRepository.findOne(options);
+  }
 
-        // DEVUELVEME UNA TAREA EN LA QUE COINCIDA EL ID INDICADO
-        return this.tasks.find (task => task.id === id)
-    }
+  async updateTask(id: string, updatedFields: UpdateTaskDto): Promise<Task> {
+    await this.taskRepository.update(id, updatedFields);
 
-    updateTask(id : string, updatedFields: UpdateTaskDto): Task {
-        // BUSCAMOS TAREA POR ID
-        const task = this.getTaskById(id)
-        //( COMBINAMOS )UTILIZAMOS UNA PROPIEDAD DE OBJETOS DE JAVASCRIPT LLAMADA "assign" PARA UNIR LO QUE TENIAMOS ANTES MAS LO QUE LE ESTAMOS PASANDO POR PARAMETROS, Y EN CASO QUE SE REPITAN LOS CAMPOS SE SOBREESCRIBEN.
-        const newTask = Object.assign(task, updatedFields)
-        // RECORREMOS Y ACTUALIZAMOS
-        this.tasks = this.tasks.map(task => task.id === id ? newTask : task)
-
-        return newTask;
-    }
-
+    return this.getTaskById(id);
+  }
 }
