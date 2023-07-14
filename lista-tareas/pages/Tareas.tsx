@@ -24,6 +24,14 @@ const TaskContainer = styled('div')({
   marginBottom: '16px',
 });
 
+const MarginButton = styled(Button)({
+  margin: '5px',
+});
+
+const PaddedTextField = styled(TextField)({
+  marginRight: '16px',
+});
+
 const Tareas = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState<{ title: string; description: string }>({
@@ -117,7 +125,7 @@ const Tareas = () => {
   return (
     <Container maxWidth="sm">
       <Typography variant="h3" component="h1" align="center" m={4}>
-        Lista de Tareas
+        App de Tareas
       </Typography>
       <Grid container spacing={2}>
         {tasks.length > 0 ? (
@@ -150,17 +158,17 @@ const Tareas = () => {
                     />
                   </>
                 ) : null}
-                <Button variant="contained" color="error" onClick={() => deleteTask(task.id)}>
+                <MarginButton variant="contained" color="error" onClick={() => deleteTask(task.id)}>
                   Eliminar
-                </Button>
+                </MarginButton>
                 {task.id === taskIdToEdit ? (
-                  <Button variant="contained" color="success" onClick={() => updateTask(task.id)}>
+                  <MarginButton variant="contained" color="success" onClick={() => updateTask(task.id)}>
                     Guardar
-                  </Button>
+                  </MarginButton>
                 ) : (
-                  <Button variant="contained" onClick={() => setTaskIdToEdit(task.id)}>
+                  <MarginButton variant="contained" onClick={() => setTaskIdToEdit(task.id)}>
                     Modificar
-                  </Button>
+                  </MarginButton>
                 )}
               </TaskContainer>
             </Grid>
@@ -175,26 +183,30 @@ const Tareas = () => {
       </Grid>
       <FormContainer>
         <form onSubmit={addTask}>
-          <TextField
+          <PaddedTextField
             type="text"
+            id="outlined-basic"
+            variant="outlined"
             name="title"
+            placeholder="Título"
             value={newTask.title}
             onChange={handleInputChange}
-            placeholder="Título"
             required
           />
-          <TextField
+          <PaddedTextField
             id="outlined-basic"
             label="Descripción"
+            type="text"
             variant="outlined"
             name="description"
-            required
+            placeholder="Descripción"
             value={newTask.description}
             onChange={handleInputChange}
+            required
           />
-          <Button variant="contained" color="success" type="submit">
+          <MarginButton variant="contained" color="success" type="submit">
             Agregar
-          </Button>
+          </MarginButton>
         </form>
       </FormContainer>
     </Container>
